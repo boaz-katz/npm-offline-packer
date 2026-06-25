@@ -35,7 +35,19 @@ if (!packageArg) {
 }
 
 // Package name for output folder (strip version specifier for the folder name)
-const packageFolderName = packageArg.replace(/[@^~].*$/, '').replace(/^@/, '').replace(/\//, '__');
+function packageToFolderName(arg) {
+  let name;
+  if (arg.startsWith('@')) {
+    // @scope/pkg@1.2.3 -> @scope/pkg
+    const withoutLeading = arg.slice(1);
+    const atIdx = withoutLeading.indexOf('@');
+    name = atIdx === -1 ? arg : '@' + withoutLeading.slice(0, atIdx);
+  } else {
+    name = arg.split('@')[0];
+  }
+  return name.replace(/^@/, '').replace(/\//g, '__');
+}
+const packageFolderName = packageToFolderName(packageArg);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
